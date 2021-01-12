@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static '\css\bootstrap.css' %}">
-    <title>{% block title_Block %}Blogs{% endblock title_Block %}</title>
+    <title>{% block title_block %}Blogs{% endblock title_block %}</title>
 </head>
 <body>
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
@@ -13,10 +13,25 @@
             <li class="nav-item active">
                 <a href="" class="nav-link">Home</a>
             </li>
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a href="{% url 'App_Login:logout' %}" class="nav-link">Log out</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'App_Login:signup' %}" class="nav-link">Sign Up</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'App_Login:login' %}" class="nav-link">Log in</a>
+                </li>
+            {% endif %}
         </ul>
     </nav>
-    {% block body_block %}
-    {% endblock body_block %}
+    <div class="container" style="padding-top: 20px">
+        {% block body_block %}
+
+        {% endblock body_block %}
+    </div>
     <script src="{% static '\js\bootstrap.bundle.js' %}"></script>
 </body>
 </html>
