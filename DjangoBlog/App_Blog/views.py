@@ -1,3 +1,4 @@
+from .forms import CommentForm
 from django.shortcuts import render, HttpResponseRedirect
 from django.views.generic import CreateView, UpdateView, ListView, DetailView, View, TemplateView, DeleteView
 from .models import Blog, Comment, Like
@@ -28,3 +29,18 @@ class BlogList(ListView):
     model = Blog
     template_name = "App_Blog/blog_list.html"
     queryset = Blog.objects.order_by('-publish_date')
+
+
+@login_required
+def blog_details(request, slug):
+    blog = Blog.objects.get(slug=slug)
+    comment_form = CommentForm()
+    if request.method == "POST":
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.user = request.user
+            comment.blog = blog
+            comment.save()
+            return HttpResponseRedirect(reverse('App_Blog:blog_details', kwargs={'slug': slug}))
+    return render(request, 'App_Blog/blog_details.html', context={'blog': blog,'comment_form':comment_form})
