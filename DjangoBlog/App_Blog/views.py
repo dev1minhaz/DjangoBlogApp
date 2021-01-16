@@ -8,7 +8,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 import uuid
 
 # Create your views here.
-
+class MyBlog(LoginRequiredMixin,TemplateView):
+    template_name="App_Blog/my_blog.html"
 
 class CreateBlog(LoginRequiredMixin, CreateView):
     model = Blog
@@ -69,3 +70,12 @@ def unliked(request, pk):
     already_liked = Like.objects.filter(blog=blog, user=user)
     already_liked.delete()
     return HttpResponseRedirect(reverse('App_Blog:blog_details', kwargs={'slug': blog.slug}))
+
+
+class UpdateBlog(LoginRequiredMixin, UpdateView):
+    model = Blog
+    fields = ('blog_title', 'blog_content', 'blog_image')
+    template_name = 'App_Blog/edit_blog.html'
+
+    def get_success_url(self, **kwargs):
+        return reverse_lazy('App_Blog:blog_details', kwargs={'slug':self.object.slug})
